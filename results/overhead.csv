@@ -1,0 +1,7 @@
+detector,us_per_window,state_floats,multivariate
+Fixed threshold,0.259,1,False
+Moving average,0.658,60,False
+Z-score (static),0.304,2,False
+Mahalanobis (static),3.912,72,True
+Isolation Forest,9.0,12040,True
+Adaptive (proposed),32.847,72,True

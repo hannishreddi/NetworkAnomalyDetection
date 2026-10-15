@@ -1,0 +1,8 @@
+{
+  "Fixed threshold": 8.545208008675946,
+  "Moving average": 0.9808453815196545,
+  "Z-score (static)": 5.878031920191871,
+  "Mahalanobis (static)": 2.7254162413394303,
+  "Isolation Forest": 0.6498476967155512,
+  "Adaptive (proposed)": 3.05199722381394
+}

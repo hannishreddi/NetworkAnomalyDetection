@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# CIC-IDS2017 dataset — download separately (see README > Dataset)
+data/raw/*.zip
+data/raw/*.csv
+data/raw/cic_extract/
+
+# LaTeX build artifacts (paper.pdf itself is tracked)
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.synctex.gz
+
+# transient render / run artifacts
+report/slide-*.jpg
+report/*.pdf.tmp
+results/*.log
+
+# OS
+.DS_Store
+Thumbs.db
