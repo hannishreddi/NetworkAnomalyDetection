@@ -1,0 +1,645 @@
+<style>
+.ad { container-type: inline-size; font-family: var(--font-anthropic-sans); display: flex; flex-direction: column; gap: var(--cds-gap-xl); max-width: 84rem; margin-inline: auto; }
+.ad b, .ad strong { font-weight: var(--cds-font-weight-medium); }
+.ad-head { display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+.ad-eyebrow { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .05em; text-transform: uppercase; margin: 0; }
+.ad-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: calc(var(--cds-font-size-title) * 1.35); line-height: 1.15; margin: 0; text-wrap: balance; }
+.ad-take { font-size: var(--cds-font-size-body); line-height: 1.55; max-width: 68ch; margin: 0; }
+.ad-meta { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; line-height: 1.5; }
+.ad-section { display: flex; flex-direction: column; gap: var(--cds-gap-md); }
+.ad-h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; text-wrap: balance; }
+.ad-lede { color: var(--color-fg-muted); margin: 0; max-width: 72ch; line-height: 1.5; }
+.ad-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
+.ad-grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: var(--cds-gap-md); }
+.ad-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+.ad-card h3 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; text-wrap: balance; }
+.ad-card p { margin: 0; line-height: 1.55; }
+.ad-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; line-height: 1.5; }
+.ad-card ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: var(--cds-gap-xs); line-height: 1.5; }
+.ad-num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: calc(var(--cds-font-size-title) * 1.3); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.ad-kpis { display: grid; grid-template-columns: 1fr; gap: var(--cds-gap-md); }
+@container (min-width: 36rem) { .ad-kpis { grid-template-columns: 1fr 1fr; } .ad-kpi:first-child { grid-column: 1 / -1; } }
+@container (min-width: 66rem) { .ad-kpis { grid-template-columns: repeat(5, 1fr); } .ad-kpi:first-child { grid-column: auto; } }
+.ad-kpi .ad-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .03em; }
+.ad-kpi .ad-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
+.ad-kpi .ad-sub b { color: var(--color-fg); }
+.ad-good { color: var(--color-ok); }
+.ad-bad { color: var(--color-bad); }
+.ad-tie { color: var(--color-fg-muted); }
+.ad-flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: var(--cds-gap-xs); }
+.ad-step { flex: 1 1 9rem; min-width: 0; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); background: var(--color-bg); display: flex; flex-direction: column; gap: 2px; }
+.ad-step .k { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.ad-step .v { font-size: var(--cds-font-size-body); }
+.ad-step.hl { border-color: var(--cds-chart-axis); }
+.ad-arrow { align-self: center; color: var(--color-fg-muted); }
+.ad-formula { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: var(--cds-font-size-caption); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); overflow-x: auto; white-space: pre; }
+.ad-chart { position: relative; min-width: 0; }
+.ad-chart svg { display: block; overflow: visible; }
+.ad-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); line-height: 1.5; white-space: nowrap; z-index: 2; }
+.ad-tip .t { color: var(--cds-text-secondary); }
+.ad-tip .sw { display: inline-block; width: .55rem; height: .55rem; border-radius: 2px; margin-right: .35rem; vertical-align: baseline; }
+.ad-tip .row { display: flex; gap: var(--cds-gap-sm); justify-content: space-between; }
+.ad-tip .row span:last-child { font-variant-numeric: tabular-nums; }
+.ad-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.ad-legend span { display: inline-flex; align-items: center; gap: .35rem; }
+.ad-legend i { display: inline-block; width: .65rem; height: .65rem; border-radius: 50%; }
+.ad-heat { display: grid; grid-template-columns: minmax(6rem, max-content) repeat(5, minmax(0, 1fr)); gap: 3px; font-size: var(--cds-font-size-caption); }
+.ad-heat .hd { color: var(--color-fg-muted); padding: 0 2px 4px; align-self: end; line-height: 1.3; text-align: center; }
+.ad-heat .rl { align-self: center; padding-right: var(--cds-pad-sm); line-height: 1.3; }
+.ad-heat .rl.me { font-weight: var(--cds-font-weight-medium); }
+.ad-heat .c { border-radius: 4px; text-align: center; padding: .55rem 0; font-variant-numeric: tabular-nums; }
+.ad-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--cds-gap-lg); }
+.ad-panel { display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; }
+.ad-panel h4 { margin: 0; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+.ad-table-wrap { overflow: auto; max-height: 26rem; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+.ad-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.ad-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.ad-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.ad-table tr:last-child td { border-bottom: 0; }
+.ad-table .n { text-align: right; }
+.ad-table tr.me td { font-weight: var(--cds-font-weight-medium); }
+.ad-pill { display: inline-block; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--color-border-line); }
+.ad-pill.win { color: var(--color-ok); }
+.ad-pill.loss { color: var(--color-bad); }
+.ad-pill.tie { color: var(--color-fg-muted); }
+.ad-bar { display: inline-block; height: .5rem; border-radius: 4px; vertical-align: middle; margin-right: .5rem; }
+.ad-controls { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.ad-controls select { font: inherit; color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: 4px 8px; }
+.ad-controls select:focus-visible { outline: 2px solid var(--cds-chart-axis); outline-offset: 1px; }
+.ad-fail { display: flex; align-items: center; justify-content: center; gap: .5rem; min-height: inherit; height: 100%; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.ad-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.ad [data-dash-source-state=empty] { color: transparent; }
+.ad [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.ad-foot { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
+.ad code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+</style>
+
+<div class="ad">
+
+  <header class="ad-head" id="top">
+    <p class="ad-eyebrow">Computer Networks (22ITC10N) · Dept. of AI &amp; Data Science · CBIT Hyderabad</p>
+    <h1 class="ad-title">Adaptive Network Traffic Anomaly Detection</h1>
+    <p class="ad-take" id="takeaway">
+      The proposed adaptive detector reaches an event F1 of
+      <b data-source="summary" data-field="event_f1" data-where="setting=mixed&amp;detector=Adaptive (proposed)" class="dash-skeleton">—</b>
+      on mixed attacks and still scores
+      <b data-source="summary" data-field="event_f1" data-where="setting=drift%3D2.0&amp;detector=Adaptive (proposed)" class="dash-skeleton">—</b>
+      when normal traffic drifts hard, where the static Mahalanobis detector falls to
+      <b data-source="summary" data-field="event_f1" data-where="setting=drift%3D2.0&amp;detector=Mahalanobis (static)" class="dash-skeleton">—</b>.
+      It needs no training and catches the port scans and protocol shifts that volume monitors miss.
+    </p>
+    <p class="ad-meta">Team: A. Hannish Reddi (160124771097) · B. Keshav (160124771099) · E. Sai Mohan (160124771107). Headline numbers are from the final held-out evaluation (30 simulated traces, seeds 2000–2029) and the CIC-IDS2017 real-traffic captures.</p>
+  </header>
+
+  <section class="ad-kpis" id="headline" aria-label="Headline results">
+    <div class="ad-card ad-kpi">
+      <span class="ad-label">Event F1, mixed attacks</span>
+      <span class="ad-num dash-skeleton" data-source="summary" data-field="event_f1" data-where="setting=mixed&amp;detector=Adaptive (proposed)">—</span>
+      <span class="ad-sub">Fixed threshold, the best single-feature baseline, scores <b class="dash-skeleton" data-source="summary" data-field="event_f1" data-where="setting=mixed&amp;detector=Fixed threshold">—</b></span>
+    </div>
+    <div class="ad-card ad-kpi">
+      <span class="ad-label">False alarms per 1,000 windows</span>
+      <span class="ad-num dash-skeleton" data-source="summary" data-field="fa_per_1k" data-where="setting=mixed&amp;detector=Adaptive (proposed)">—</span>
+      <span class="ad-sub"><b class="dash-skeleton" data-source="fa_ratio" data-field="ratio">—</b> fewer than static Mahalanobis (<span class="dash-skeleton" data-source="summary" data-field="fa_per_1k" data-where="setting=mixed&amp;detector=Mahalanobis (static)">—</span>)</span>
+    </div>
+    <div class="ad-card ad-kpi">
+      <span class="ad-label">Event F1 under strongest drift</span>
+      <span class="ad-num dash-skeleton" data-source="summary" data-field="event_f1" data-where="setting=drift%3D2.0&amp;detector=Adaptive (proposed)">—</span>
+      <span class="ad-sub"><b class="ad-good dash-skeleton" data-source="stats" data-field="mean_diff" data-where="setting=drift%3D2.0&amp;versus=Mahalanobis (static)">—</b> over static Mahalanobis, Wilcoxon p = <span class="dash-skeleton" data-source="stats" data-field="p" data-where="setting=drift%3D2.0&amp;versus=Mahalanobis (static)">—</span></span>
+    </div>
+    <div class="ad-card ad-kpi">
+      <span class="ad-label">Real port-scan minutes caught</span>
+      <span class="ad-num dash-skeleton" data-source="cic" data-field="recall_at_fpr" data-where="day=PortScan&amp;detector=Adaptive (proposed)">—</span>
+      <span class="ad-sub">CIC-IDS2017, ROC-AUC <b class="dash-skeleton" data-source="cic" data-field="roc_auc" data-where="day=PortScan&amp;detector=Adaptive (proposed)">—</b>. Volume monitors catch <span class="dash-skeleton" data-source="cic" data-field="recall_at_fpr" data-where="day=PortScan&amp;detector=Fixed threshold">—</span></span>
+    </div>
+    <div class="ad-card ad-kpi">
+      <span class="ad-label">Cost per window</span>
+      <span class="ad-num dash-skeleton" data-source="overhead" data-field="us_per_window" data-where="detector=Adaptive (proposed)">—</span>
+      <span class="ad-sub"><b class="dash-skeleton" data-source="overhead" data-field="state_floats" data-where="detector=Adaptive (proposed)">—</b> floats of state, <span class="dash-skeleton" data-source="state_ratio" data-field="ratio">—</span> less than Isolation Forest</span>
+    </div>
+  </section>
+
+  <section class="ad-section" id="about">
+    <h2 class="ad-h2">What the project is for</h2>
+    <div class="ad-grid3">
+      <div class="ad-card">
+        <h3>The problem</h3>
+        <p>Most network monitors watch one number, usually traffic volume, and alarm when it crosses a line. That misses attacks that do not add much traffic, such as a port scan or a sudden shift from TCP to UDP. Fixed baselines also go stale as normal traffic slowly drifts over days.</p>
+      </div>
+      <div class="ad-card">
+        <h3>The question</h3>
+        <p>Can a training-free statistical detector catch the anomalies that single-feature volume monitors miss, keep false alarms low, and stay accurate when normal traffic drifts, at a cost light enough to run continuously?</p>
+      </div>
+      <div class="ad-card">
+        <h3>The answer</h3>
+        <p>Scoring several traffic features together is what defeats non-volumetric attacks, in simulation and on real traffic. Online adaptation on top of that ties the static model when traffic is steady and wins when traffic drifts, which is the realistic case for a monitor left running.</p>
+      </div>
+    </div>
+
+    <div class="ad-card" id="method">
+      <h3>How the detector works</h3>
+      <div class="ad-flow" role="list">
+        <div class="ad-step" role="listitem"><span class="k">Input</span><span class="v">Packets and flows</span></div>
+        <span class="ad-arrow" aria-hidden="true">→</span>
+        <div class="ad-step" role="listitem"><span class="k">Windowing</span><span class="v">Fixed-length time windows</span></div>
+        <span class="ad-arrow" aria-hidden="true">→</span>
+        <div class="ad-step" role="listitem"><span class="k">Features</span><span class="v">8-number summary per window</span></div>
+        <span class="ad-arrow" aria-hidden="true">→</span>
+        <div class="ad-step hl" role="listitem"><span class="k">Score</span><span class="v">Mahalanobis distance to the running normal</span></div>
+        <span class="ad-arrow" aria-hidden="true">→</span>
+        <div class="ad-step hl" role="listitem"><span class="k">Gated update</span><span class="v">Learn only from windows that look normal</span></div>
+        <span class="ad-arrow" aria-hidden="true">→</span>
+        <div class="ad-step" role="listitem"><span class="k">Output</span><span class="v">Alarm when score passes the threshold</span></div>
+      </div>
+      <div class="ad-grid">
+        <div style="display:flex;flex-direction:column;gap:var(--cds-gap-sm);min-width:0">
+          <p>Each window becomes a feature vector: log packets, log bytes, unique destination ports and unique source IPs, the SYN ratio and UDP fraction, plus log packets-per-source and log bytes-per-packet. The two ratio features are what expose attacks that do not change volume.</p>
+          <p>The detector keeps an exponentially weighted (EWMA) mean <i>m</i> and covariance <i>S</i> of that vector and scores each window by its normalised Mahalanobis distance. When a window looks suspicious, the mean only creeps and the covariance freezes, so an attack cannot teach the model that it is normal.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--cds-gap-sm);min-width:0">
+          <div class="ad-formula">s_t = sqrt( (x_t − m)ᵀ S⁻¹ (x_t − m) / p )</div>
+          <p class="ad-note">Six detectors are compared on the same window → feature → detector pipeline: four conventional baselines (fixed threshold, moving average, z-score, static Mahalanobis), one heavier machine-learning reference (Isolation Forest), and the proposed adaptive detector. Hyper-parameters and thresholds were tuned only on development seeds 100–109; the reported numbers come from held-out seeds the method never saw. On real data the method is frozen and only the alarm threshold is calibrated on a benign period.</p>
+          <p class="ad-note"><b>Event F1</b> combines event recall (an attack counts as caught if any alarm fires during it) with alarm-episode precision (a run of alarms is a false alarm if it overlaps no attack).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ad-section" id="simulation">
+    <h2 class="ad-h2">Results on simulated traffic</h2>
+    <p class="ad-lede">The simulator produces window-level traffic with daily cycles, random wander, benign flash crowds and five labelled attack families. Each figure averages 30 held-out traces; whiskers are 95% confidence intervals.</p>
+    <div class="ad-grid">
+      <div class="ad-card">
+        <h3 id="f1-title">Mixed attacks: event F1 by detector</h3>
+        <p class="ad-note">The two multivariate detectors clear every single-feature baseline by a wide margin. Adaptive and static Mahalanobis are statistically tied here.</p>
+        <div class="ad-chart" id="chart-f1" data-source="summary" style="min-height:250px"></div>
+      </div>
+      <div class="ad-card">
+        <h3 id="drift-title">Robustness to drifting normal traffic</h3>
+        <p class="ad-note">As benign traffic drifts further from where it started, static detectors raise more false alarms and lose F1. The adaptive detector stays almost flat.</p>
+        <div class="ad-chart" id="chart-drift" data-source="summary" style="min-height:250px"></div>
+      </div>
+    </div>
+    <div class="ad-card">
+      <h3 id="types-title">Event recall by attack type</h3>
+      <p class="ad-note">Port scans and protocol shifts are caught only by the multivariate detectors. Slow ramps are the adaptive detector's weak point: its own adaptation partly absorbs a gradual change.</p>
+      <div class="ad-chart" id="chart-types" data-source="summary" style="min-height:240px"></div>
+    </div>
+  </section>
+
+  <section class="ad-section" id="real">
+    <h2 class="ad-h2">Results on real traffic (CIC-IDS2017)</h2>
+    <p class="ad-lede">The same detectors, frozen, run on per-minute windows built from the Friday port-scan and DDoS captures of CIC-IDS2017. Thresholds are set on benign minutes so that roughly 5% of benign minutes alarm.</p>
+    <div class="ad-card">
+      <h3 id="cic-title">Share of attack minutes caught</h3>
+      <p class="ad-note">The simulated finding reappears: multivariate scoring catches the non-volumetric port scan that volume monitors miss. DDoS is an easy volumetric case for most detectors.</p>
+      <div class="ad-chart" id="chart-cic" data-source="cic" style="min-height:230px"></div>
+    </div>
+    <div class="ad-card">
+      <h3 id="portscan-title">Port-scan capture, minute by minute</h3>
+      <p class="ad-note">Shaded minutes are labelled attack. Scan minutes stand out in unique destination ports, while their packet counts overlap with ordinary busy minutes. No single feature separates them cleanly, which is why the detectors score all features together.</p>
+      <div class="ad-chart" id="chart-portscan" data-source="portscan" style="min-height:330px"></div>
+    </div>
+  </section>
+
+  <section class="ad-section" id="design-checks">
+    <h2 class="ad-h2">Why each part of the design is there</h2>
+    <div class="ad-grid">
+      <div class="ad-card">
+        <h3 id="ablation-title">Ablation: event F1 when a component is changed</h3>
+        <p class="ad-note">Steady traffic versus strong drift, 30 traces each. Gating and the full covariance carry most of the gain; CUSUM post-processing hurts badly.</p>
+        <div class="ad-legend" aria-hidden="true"><span><i style="background:var(--cds-chart-muted)"></i>Steady traffic</span><span><i id="ablation-swatch"></i>Strong drift</span></div>
+        <div class="ad-chart" id="chart-ablation" data-source="ablation_mean" style="min-height:260px"></div>
+      </div>
+      <div class="ad-card">
+        <h3 id="cost-title">Runtime cost per window</h3>
+        <p class="ad-note">Measured per window on the project machine. The adaptive detector is the slowest per window but keeps very little state and needs no training phase.</p>
+        <div class="ad-table-wrap" style="max-height:none">
+          <table class="ad-table" id="table-cost" data-source="overhead" data-row-key="detector">
+            <thead><tr><th data-field="detector">Detector</th><th class="n" data-field="us_per_window">µs per window</th><th class="n" data-field="state_floats">State (floats)</th><th data-field="multivariate">Multivariate</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="ad-card">
+      <h3 id="stats-title">Adaptive detector versus each baseline</h3>
+      <p class="ad-note">Paired Wilcoxon tests on event F1 over 30 held-out traces, Holm-corrected. A positive difference means the adaptive detector scored higher. Green: significantly better; red: significantly worse; grey: no significant difference (p ≥ 0.05).</p>
+      <div class="ad-controls"><label for="stats-setting">Setting</label><select id="stats-setting"></select></div>
+      <div class="ad-table-wrap">
+        <table class="ad-table" id="table-stats" data-source="stats" data-row-key="setting,versus">
+          <thead><tr><th data-field="setting">Setting</th><th data-field="versus">Versus</th><th class="n" data-field="mean_diff">F1 difference</th><th class="n" data-field="wins">Wins</th><th class="n" data-field="losses">Losses</th><th class="n" data-field="p_holm">p (Holm)</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="ad-foot" id="limits">
+    <div class="ad-card">
+      <h3>Limitations</h3>
+      <ul>
+        <li>The controlled experiments use synthetic traffic, so absolute numbers reflect the simulator's assumptions rather than a specific production network.</li>
+        <li>The CIC-IDS2017 captures are single, hour-long sessions at minute resolution: too short and too steady to show the drift advantage on real traffic.</li>
+        <li>The detector trails on very slow-ramping attacks, because its own adaptation partly absorbs a gradual change.</li>
+      </ul>
+    </div>
+    <div class="ad-card">
+      <h3>Project materials</h3>
+      <ul>
+        <li>Research paper: <code>report/paper.pdf</code></li>
+        <li>Slides: <code>report/CN_AnomalyDetection_Presentation.pptx</code></li>
+        <li>Code: <code>src/</code>, with 14 unit tests in <code>tests/test_core.py</code></li>
+        <li>Reproduce: <code>python -m src.run_final</code> writes the held-out results this page reads</li>
+        <li>Dataset: CIC-IDS2017, Canadian Institute for Cybersecurity (Sharafaldin et al., ICISSP 2018)</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  const ME = 'Adaptive (proposed)';
+  const MAHA = 'Mahalanobis (static)';
+  const ORDER = [ME, MAHA, 'Isolation Forest', 'Fixed threshold', 'Z-score (static)', 'Moving average'];
+  const SHORT = { 'Adaptive (proposed)': 'Adaptive', 'Mahalanobis (static)': 'Mahalanobis', 'Isolation Forest': 'Isolation Forest', 'Fixed threshold': 'Fixed threshold', 'Z-score (static)': 'Z-score', 'Moving average': 'Moving average' };
+  const SETTING = { mixed: 'Mixed attacks', burst: 'Volumetric burst', flood: 'SYN flood', scan: 'Port scan', proto_shift: 'Protocol shift', slow_ramp: 'Slow ramp', 'drift=0.0': 'Drift 0', 'drift=0.5': 'Drift 0.5', 'drift=1.0': 'Drift 1', 'drift=2.0': 'Drift 2' };
+  const TYPES = ['burst', 'flood', 'scan', 'proto_shift', 'slow_ramp'];
+  const f3 = d3.format('.3f'), f2 = d3.format('.2f'), pct = d3.format('.0%');
+  const num = (v) => Number(v);
+
+  // ---- calcs ----
+  dash.calc('fa_ratio', {
+    inputs: ['summary'],
+    title: 'False-alarm reduction, mixed',
+    description: 'Static Mahalanobis false alarms per 1,000 windows divided by the adaptive detector’s, on mixed attacks.',
+    fn: (summary) => {
+      const fa = (d) => Number(summary.find((r) => r.setting === 'mixed' && r.detector === d).fa_per_1k);
+      return [{ ratio: fa('Mahalanobis (static)') / fa('Adaptive (proposed)') }];
+    }
+  });
+  dash.calc('state_ratio', {
+    inputs: ['overhead'],
+    title: 'State size vs Isolation Forest',
+    description: 'Isolation Forest state floats divided by the adaptive detector’s.',
+    fn: (overhead) => {
+      const s = (d) => Number(overhead.find((r) => r.detector === d).state_floats);
+      return [{ ratio: s('Isolation Forest') / s('Adaptive (proposed)') }];
+    }
+  });
+  dash.calc('ablation_mean', {
+    inputs: ['ablation'],
+    title: 'Ablation means by variant',
+    description: 'Mean event F1 and false alarms per 1,000 windows for each ablation variant and scenario, over its 30 traces.',
+    fn: (ablation) => {
+      const groups = {};
+      for (const r of ablation) {
+        const k = r.variant + '|' + r.scenario;
+        const g = groups[k] || (groups[k] = { variant: r.variant, scenario: r.scenario, f1: 0, fa: 0, n: 0 });
+        g.f1 += Number(r.event_f1); g.fa += Number(r.fa_per_1k); g.n += 1;
+      }
+      return Object.values(groups).map((g) => ({ variant: g.variant, scenario: g.scenario, event_f1: g.f1 / g.n, fa_per_1k: g.fa / g.n, n: g.n }));
+    }
+  });
+
+  // ---- helpers ----
+  const root = document.querySelector('.ad');
+  const status = (ids) => {
+    const st = ids.map((id) => dash.data(id).status);
+    if (st.every((s) => s === 'ok')) return 'ok';
+    if (st.some((s) => s === 'error' || s === 'connect' || s === 'declined' || s === 'missing')) return 'error';
+    return 'loading';
+  };
+  function boxState(el, ids) {
+    const s = status(ids);
+    el.innerHTML = '';
+    el.classList.toggle('dash-skeleton', s === 'loading');
+    if (s === 'error') { const f = document.createElement('div'); f.className = 'ad-fail'; f.textContent = 'Failed to load'; el.appendChild(f); }
+    return s === 'ok';
+  }
+  function measure(svg, text, cls) {
+    const t = svg.append('text').attr('class', cls || '').style('font-size', 'var(--cds-font-size-caption)').text(text);
+    const w = t.node().getComputedTextLength(); t.remove(); return w;
+  }
+  function tip(el) {
+    const t = document.createElement('div'); t.className = 'ad-tip'; t.hidden = true; el.appendChild(t); return t;
+  }
+  function placeTip(t, el, x, y) {
+    t.hidden = false;
+    const w = t.offsetWidth, h = t.offsetHeight, W = el.clientWidth;
+    let left = x + 12; if (left + w > W) left = Math.max(0, x - w - 12);
+    t.style.left = left + 'px'; t.style.top = Math.max(0, y - h - 8) + 'px';
+  }
+  function tipRow(t, color, name, value) {
+    const r = document.createElement('div'); r.className = 'row';
+    const a = document.createElement('span');
+    if (color) { const sw = document.createElement('i'); sw.className = 'sw'; sw.style.background = color; a.appendChild(sw); }
+    a.appendChild(document.createTextNode(name));
+    const b = document.createElement('span'); b.textContent = value;
+    r.append(a, b); t.appendChild(r);
+  }
+  function tipTitle(t, s) { t.innerHTML = ''; const d = document.createElement('div'); d.className = 't'; d.textContent = s; t.appendChild(d); }
+  const colorOf = (d) => d === ME ? dash.colors[0] : d === MAHA ? dash.colors[1] : 'var(--cds-chart-muted)';
+  const cleanAxis = (g) => g.attr('font-size', null).attr('font-family', null).call((g) => g.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)')).call((g) => g.selectAll('.tick line').attr('stroke', 'var(--cds-chart-grid)')).call((g) => g.select('.domain').remove());
+
+  // ---- text marks ----
+  function fillMarks() {
+    root.querySelectorAll('[data-source][data-field]:not(th)').forEach((el) => {
+      const id = el.dataset.source, field = el.dataset.field;
+      const d = dash.data(id);
+      if (d.status !== 'ok') { el.textContent = '—'; el.classList.toggle('dash-skeleton', d.status === 'loading'); return; }
+      el.classList.remove('dash-skeleton');
+      let row = d.data[0];
+      if (el.dataset.where) {
+        const conds = el.dataset.where.split('&').map((p) => p.split('=').map(decodeURIComponent));
+        row = d.data.find((r) => conds.every(([k, v]) => String(r[k]) === v));
+      }
+      if (!row) { el.textContent = '—'; return; }
+      const v = num(row[field]);
+      let s;
+      if (field === 'ratio') s = (v >= 10 ? d3.format('.0f')(v) : d3.format('.1f')(v)) + '×';
+      else if (field === 'recall_at_fpr') s = pct(v);
+      else if (field === 'roc_auc') s = f3(v);
+      else if (field === 'mean_diff') s = (v >= 0 ? '+' : '−') + f3(Math.abs(v));
+      else if (field === 'p') s = v < 0.001 ? v.toExponential(1) : d3.format('.3f')(v);
+      else if (field === 'us_per_window') s = d3.format('.1f')(v) + ' µs';
+      else if (field === 'state_floats') s = d3.format(',')(v);
+      else s = f3(v);
+      el.textContent = s;
+    });
+  }
+
+  // ---- chart: F1 bars ----
+  function drawF1() {
+    const el = document.getElementById('chart-f1');
+    if (!boxState(el, ['summary'])) return;
+    const rows = dash.data('summary').data.filter((r) => r.setting === 'mixed').map((r) => ({ d: r.detector, v: num(r.event_f1), ci: num(r.event_f1_ci) })).sort((a, b) => b.v - a.v);
+    const W = el.clientWidth, rowH = 36, H = rows.length * rowH + 28;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Event F1 by detector on mixed attacks');
+    const narrow = W < 420;
+    const label = (d) => narrow ? SHORT[d] : d;
+    const left = d3.max(rows, (r) => measure(svg, label(r.d))) + 12;
+    const right = measure(svg, '0.000') + 14;
+    const x = d3.scaleLinear([0, 1], [left, W - right]);
+    const y = d3.scaleBand(rows.map((r) => r.d), [0, H - 28]).padding(0.38);
+    svg.append('g').attr('transform', `translate(0,${H - 22})`).call(d3.axisBottom(x).ticks(narrow ? 4 : 5).tickSize(-(H - 22)).tickFormat(d3.format('.1f'))).call(cleanAxis).call((g) => g.selectAll('.tick text').attr('dy', '1.1em'));
+    const g = svg.append('g');
+    rows.forEach((r) => {
+      const yy = y(r.d), bh = y.bandwidth();
+      g.append('text').attr('x', left - 10).attr('y', yy + bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)').style('font-weight', r.d === ME ? 'var(--cds-font-weight-medium)' : null).text(label(r.d));
+      g.append('rect').attr('x', x(0)).attr('y', yy).attr('height', bh).attr('width', Math.max(0, x(r.v) - x(0))).attr('rx', 4).attr('fill', colorOf(r.d));
+      g.append('line').attr('x1', x(r.v - r.ci)).attr('x2', x(Math.min(1, r.v + r.ci))).attr('y1', yy + bh / 2).attr('y2', yy + bh / 2).attr('stroke', 'var(--color-fg)').attr('stroke-width', 1.5).attr('opacity', 0.55);
+      g.append('text').attr('x', x(Math.min(1, r.v + r.ci)) + 6).attr('y', yy + bh / 2).attr('dy', '0.35em').attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)').style('font-variant-numeric', 'tabular-nums').text(f3(r.v));
+    });
+    const t = tip(el);
+    svg.selectAll('rect').data(rows).on('mousemove', (ev, r) => {
+      tipTitle(t, r.d); tipRow(t, null, 'Event F1', f3(r.v)); tipRow(t, null, '95% CI', '± ' + f3(r.ci));
+      const [mx, my] = d3.pointer(ev, el); placeTip(t, el, mx, my);
+    }).on('mouseleave', () => { t.hidden = true; });
+  }
+
+  // ---- chart: drift lines ----
+  function drawDrift() {
+    const el = document.getElementById('chart-drift');
+    if (!boxState(el, ['summary'])) return;
+    const all = dash.data('summary').data.filter((r) => String(r.setting).startsWith('drift='));
+    const series = ORDER.map((d) => ({ d, pts: all.filter((r) => r.detector === d).map((r) => ({ x: num(String(r.setting).slice(6)), v: num(r.event_f1) })).sort((a, b) => a.x - b.x) }));
+    const W = el.clientWidth, H = 250, top = 10, bottom = 34;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Event F1 versus drift strength for each detector');
+    const narrow = W < 460;
+    const endLabel = (s) => (narrow ? SHORT[s.d].split(' ')[0] : SHORT[s.d]) + ' ' + f3(s.pts[s.pts.length - 1].v);
+    const right = d3.max(series, (s) => measure(svg, endLabel(s))) + 12;
+    const yMin = Math.floor(d3.min(all, (r) => num(r.event_f1)) * 10) / 10;
+    const x = d3.scaleLinear([0, 2], [36, W - right]);
+    const y = d3.scaleLinear([yMin, 1], [H - bottom, top]);
+    svg.append('g').attr('transform', 'translate(36,0)').call(d3.axisLeft(y).ticks(5).tickSize(-(W - right - 36)).tickFormat(d3.format('.1f'))).call(cleanAxis).call((g) => g.selectAll('.tick text').attr('dx', '-0.3em'));
+    svg.append('g').attr('transform', `translate(0,${H - bottom})`).call(d3.axisBottom(x).tickValues([0, 0.5, 1, 2]).tickSize(0).tickFormat(d3.format('~g'))).call(cleanAxis).call((g) => g.selectAll('.tick text').attr('dy', '1.2em'));
+    svg.append('text').attr('x', (36 + W - right) / 2).attr('y', H - 2).attr('text-anchor', 'middle').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text('Drift strength of normal traffic');
+    const line = d3.line().x((p) => x(p.x)).y((p) => y(p.v));
+    const drawOrder = [...series].reverse();
+    svg.append('g').selectAll('path').data(drawOrder).join('path').attr('d', (s) => line(s.pts)).attr('fill', 'none').attr('stroke', (s) => colorOf(s.d)).attr('stroke-width', (s) => s.d === ME || s.d === MAHA ? 2.5 : 1.5).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+    svg.append('g').selectAll('circle').data(drawOrder.flatMap((s) => s.pts.map((p) => ({ ...p, d: s.d })))).join('circle').attr('cx', (p) => x(p.x)).attr('cy', (p) => y(p.v)).attr('r', (p) => p.d === ME || p.d === MAHA ? 3 : 2).attr('fill', (p) => colorOf(p.d));
+    // end labels, pushed apart
+    const labs = series.map((s) => ({ s, y: y(s.pts[s.pts.length - 1].v) })).sort((a, b) => a.y - b.y);
+    for (let it = 0; it < 30; it++) { for (let i = 1; i < labs.length; i++) { const gap = labs[i].y - labs[i - 1].y; if (gap < 14) { const m = (14 - gap) / 2; labs[i].y += m; labs[i - 1].y -= m; } } }
+    labs.forEach((l) => { l.y = Math.min(H - bottom, Math.max(top, l.y)); });
+    svg.append('g').selectAll('text').data(labs).join('text').attr('x', W - right + 8).attr('y', (l) => l.y).attr('dy', '0.35em').attr('fill', (l) => l.s.d === ME || l.s.d === MAHA ? 'var(--color-fg)' : 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').style('font-weight', (l) => l.s.d === ME ? 'var(--cds-font-weight-medium)' : null).text((l) => endLabel(l.s));
+    // hover
+    const t = tip(el);
+    const rule = svg.append('line').attr('y1', top).attr('y2', H - bottom).attr('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
+    const xs = [0, 0.5, 1, 2];
+    svg.append('rect').attr('x', 36).attr('y', top).attr('width', Math.max(0, W - right - 36)).attr('height', H - bottom - top).attr('fill', 'transparent')
+      .on('mousemove', (ev) => {
+        const [mx, my] = d3.pointer(ev, el);
+        const xv = xs.reduce((a, b) => Math.abs(x(b) - mx) < Math.abs(x(a) - mx) ? b : a);
+        rule.attr('x1', x(xv)).attr('x2', x(xv)).attr('opacity', 1);
+        tipTitle(t, 'Drift ' + d3.format('~g')(xv));
+        series.map((s) => ({ s, p: s.pts.find((p) => p.x === xv) })).filter((o) => o.p).sort((a, b) => b.p.v - a.p.v).forEach((o) => tipRow(t, colorOf(o.s.d), SHORT[o.s.d], f3(o.p.v)));
+        placeTip(t, el, mx, my);
+      }).on('mouseleave', () => { t.hidden = true; rule.attr('opacity', 0); });
+  }
+
+  // ---- chart: per-type heatmap ----
+  function drawTypes() {
+    const el = document.getElementById('chart-types');
+    if (!boxState(el, ['summary'])) return;
+    const rows = dash.data('summary').data;
+    const narrow = el.clientWidth < 520;
+    const grid = document.createElement('div'); grid.className = 'ad-heat'; grid.setAttribute('role', 'table'); grid.setAttribute('aria-label', 'Event recall by detector and attack type');
+    const cell = (cls, text) => { const c = document.createElement('div'); c.className = cls; c.textContent = text; grid.appendChild(c); return c; };
+    cell('hd', '');
+    TYPES.forEach((ty) => cell('hd', SETTING[ty]));
+    const t = tip(el);
+    ORDER.forEach((d) => {
+      cell('rl' + (d === ME ? ' me' : ''), narrow ? SHORT[d] : d);
+      TYPES.forEach((ty) => {
+        const r = rows.find((x) => x.setting === ty && x.detector === d);
+        const v = r ? num(r.event_recall) : NaN;
+        const c = cell('c', isNaN(v) ? '' : pct(v));
+        const share = isNaN(v) ? 0 : Math.round(v * 100);
+        c.style.background = `color-mix(in srgb, ${dash.colors[0]} ${share}%, var(--color-bg))`;
+        c.style.color = share >= 55 ? 'var(--color-bg)' : 'var(--color-fg)';
+        c.addEventListener('mousemove', (ev) => {
+          tipTitle(t, (d === ME ? 'Adaptive' : d) + ' · ' + SETTING[ty]);
+          tipRow(t, null, 'Event recall', pct(v)); tipRow(t, null, 'Event F1', r ? f3(num(r.event_f1)) : '—');
+          const [mx, my] = d3.pointer(ev, el); placeTip(t, el, mx, my);
+        });
+        c.addEventListener('mouseleave', () => { t.hidden = true; });
+      });
+    });
+    el.insertBefore(grid, t);
+  }
+
+  // ---- chart: CIC-IDS2017 small multiples ----
+  function drawCic() {
+    const el = document.getElementById('chart-cic');
+    if (!boxState(el, ['cic'])) return;
+    const rows = dash.data('cic').data;
+    const wrap = document.createElement('div'); wrap.className = 'ad-panels'; el.appendChild(wrap);
+    const t = tip(el);
+    const days = ['PortScan', 'DDoS'];
+    // add every panel before measuring any, so each is sized to its final column
+    const panels = days.map(() => { const p = document.createElement('div'); p.className = 'ad-panel'; wrap.appendChild(p); return p; });
+    days.forEach((day, i) => {
+      const dr = rows.filter((r) => r.day === day);
+      const p = panels[i];
+      const h = document.createElement('h4'); h.textContent = day === 'PortScan' ? 'Port scan' : 'DDoS'; p.appendChild(h);
+      const any = dr[0];
+      const n = document.createElement('p'); n.className = 'ad-note';
+      n.textContent = any ? `${d3.format(',')(num(any.n_attack))} attack minutes of ${d3.format(',')(num(any.n_test))} tested · benign alarm rate ${d3.format('.1%')(num(any.fpr))}` : '';
+      p.appendChild(n);
+      const box = document.createElement('div'); p.appendChild(box);
+      const W = Math.max(240, box.clientWidth || p.clientWidth), rowH = 28, H = ORDER.length * rowH + 24;
+      const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', `Recall and ROC-AUC on ${day}`);
+      const left = d3.max(ORDER, (d) => measure(svg, SHORT[d])) + 10;
+      const right = measure(svg, '100%  AUC 0.000') + 12;
+      const x = d3.scaleLinear([0, 1], [left, W - right]);
+      const y = d3.scaleBand(ORDER, [0, H - 24]).padding(0.35);
+      svg.append('g').attr('transform', `translate(0,${H - 20})`).call(d3.axisBottom(x).ticks(4).tickSize(-(H - 20)).tickFormat(pct)).call(cleanAxis).call((g) => g.selectAll('.tick text').attr('dy', '1.1em'));
+      ORDER.forEach((d) => {
+        const r = dr.find((q) => q.detector === d); if (!r) return;
+        const v = num(r.recall_at_fpr), auc = num(r.roc_auc), yy = y(d), bh = y.bandwidth();
+        svg.append('text').attr('x', left - 8).attr('y', yy + bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)').style('font-weight', d === ME ? 'var(--cds-font-weight-medium)' : null).text(SHORT[d]);
+        const bar = svg.append('rect').attr('x', x(0)).attr('y', yy).attr('height', bh).attr('width', Math.max(v > 0 ? 3 : 0, x(v) - x(0))).attr('rx', 4).attr('fill', colorOf(d));
+        svg.append('text').attr('x', x(v) + 6).attr('y', yy + bh / 2).attr('dy', '0.35em').attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)').style('font-variant-numeric', 'tabular-nums').text(pct(v));
+        svg.append('text').attr('x', W - 2).attr('y', yy + bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').style('font-variant-numeric', 'tabular-nums').text('AUC ' + f3(auc));
+        bar.on('mousemove', (ev) => {
+          tipTitle(t, d + ' · ' + (day === 'PortScan' ? 'Port scan' : 'DDoS'));
+          tipRow(t, null, 'Attack minutes caught', pct(v)); tipRow(t, null, 'ROC-AUC', f3(auc)); tipRow(t, null, 'PR-AUC', f3(num(r.pr_auc)));
+          const [mx, my] = d3.pointer(ev, el); placeTip(t, el, mx, my);
+        }).on('mouseleave', () => { t.hidden = true; });
+      });
+    });
+  }
+
+  // ---- chart: port-scan timeline ----
+  function drawPortscan() {
+    const el = document.getElementById('chart-portscan');
+    if (!boxState(el, ['portscan'])) return;
+    const rows = dash.data('portscan').data.map((r) => ({ t: new Date(String(r.win).replace(' ', 'T') + 'Z'), pkts: num(r.pkts), dports: num(r.dports), y: num(r.y) })).filter((r) => !isNaN(r.t));
+    if (!rows.length) return;
+    const W = el.clientWidth, panelH = 130, gap = 34, top = 18, H = top + panelH * 2 + gap + 26;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Unique destination ports and packets per minute during the CIC-IDS2017 port-scan capture');
+    const fmtC = (v) => new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(v);
+    const left = Math.max(measure(svg, fmtC(d3.max(rows, (r) => r.pkts))), measure(svg, fmtC(d3.max(rows, (r) => r.dports)))) + 12;
+    const x = d3.scaleUtc(d3.extent(rows, (r) => r.t), [left, W - 8]);
+    const step = (x.range()[1] - x.range()[0]) / Math.max(1, rows.length - 1);
+    const panels = [
+      { key: 'dports', name: 'Unique destination ports per minute', y0: top, color: dash.colors[0] },
+      { key: 'pkts', name: 'Packets per minute', y0: top + panelH + gap, color: 'var(--cds-chart-muted)' }
+    ];
+    panels.forEach((pn) => {
+      const y = d3.scaleLinear([0, d3.max(rows, (r) => r[pn.key]) * 1.05], [pn.y0 + panelH, pn.y0]);
+      pn.y = y;
+      svg.append('text').attr('x', left).attr('y', pn.y0 - 6).attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)').style('font-weight', 'var(--cds-font-weight-medium)').text(pn.name);
+      svg.append('g').selectAll('rect').data(rows.filter((r) => r.y === 1)).join('rect').attr('x', (r) => x(r.t) - step / 2).attr('width', Math.max(2, step)).attr('y', pn.y0).attr('height', panelH).attr('fill', 'var(--color-bad)').attr('opacity', 0.14);
+      svg.append('g').attr('transform', `translate(${left},0)`).call(d3.axisLeft(y).ticks(3).tickSize(-(W - 8 - left)).tickFormat(fmtC)).call(cleanAxis).call((g) => g.selectAll('.tick text').attr('dx', '-0.3em'));
+      const area = d3.area().x((r) => x(r.t)).y0(pn.y0 + panelH).y1((r) => y(r[pn.key]));
+      const line = d3.line().x((r) => x(r.t)).y((r) => y(r[pn.key]));
+      svg.append('path').attr('d', area(rows)).attr('fill', pn.color).attr('opacity', 0.14);
+      svg.append('path').attr('d', line(rows)).attr('fill', 'none').attr('stroke', pn.color).attr('stroke-width', 1.75).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+    });
+    svg.append('g').attr('transform', `translate(0,${top + panelH * 2 + gap})`).call(d3.axisBottom(x).ticks(W < 500 ? 4 : 8).tickSize(0).tickFormat(d3.utcFormat('%H:%M'))).call(cleanAxis).call((g) => g.selectAll('.tick text').attr('dy', '1.2em'));
+    const t = tip(el);
+    const rule = svg.append('line').attr('y1', top).attr('y2', top + panelH * 2 + gap).attr('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
+    svg.append('rect').attr('x', left).attr('y', top).attr('width', Math.max(0, W - 8 - left)).attr('height', panelH * 2 + gap).attr('fill', 'transparent')
+      .on('mousemove', (ev) => {
+        const [mx, my] = d3.pointer(ev, el);
+        const tv = x.invert(mx);
+        const r = rows[d3.minIndex(rows, (q) => Math.abs(q.t - tv))];
+        rule.attr('x1', x(r.t)).attr('x2', x(r.t)).attr('opacity', 1);
+        tipTitle(t, d3.utcFormat('%b %-d, %H:%M')(r.t) + (r.y === 1 ? ' · attack' : ' · benign'));
+        tipRow(t, null, 'Destination ports', d3.format(',')(r.dports)); tipRow(t, null, 'Packets', d3.format(',')(r.pkts));
+        placeTip(t, el, mx, my);
+      }).on('mouseleave', () => { t.hidden = true; rule.attr('opacity', 0); });
+  }
+
+  // ---- chart: ablation dot plot ----
+  function drawAblation() {
+    const el = document.getElementById('chart-ablation');
+    const sw = document.getElementById('ablation-swatch'); if (sw) sw.style.background = dash.colors[0];
+    if (!boxState(el, ['ablation_mean'])) return;
+    const rows = dash.data('ablation_mean').data;
+    const variants = [...new Set(rows.map((r) => r.variant))];
+    const get = (v, s) => rows.find((r) => r.variant === v && r.scenario === s);
+    variants.sort((a, b) => (get(b, 'drift2')?.event_f1 ?? 0) - (get(a, 'drift2')?.event_f1 ?? 0));
+    const W = el.clientWidth, rowH = 32, H = variants.length * rowH + 26;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Ablation: event F1 per variant, steady and drifting traffic');
+    const left = d3.max(variants, (v) => measure(svg, v)) + 12;
+    const lo = Math.floor(d3.min(rows, (r) => r.event_f1) * 10) / 10;
+    const x = d3.scaleLinear([lo, 1], [left, W - 12]);
+    const y = d3.scaleBand(variants, [0, H - 26]).padding(0.4);
+    svg.append('g').attr('transform', `translate(0,${H - 22})`).call(d3.axisBottom(x).ticks(W < 420 ? 4 : 6).tickSize(-(H - 22)).tickFormat(d3.format('.1f'))).call(cleanAxis).call((g) => g.selectAll('.tick text').attr('dy', '1.1em'));
+    const t = tip(el);
+    variants.forEach((v) => {
+      const a = get(v, 'stationary'), b = get(v, 'drift2'), cy = y(v) + y.bandwidth() / 2;
+      svg.append('text').attr('x', left - 10).attr('y', cy).attr('dy', '0.35em').attr('text-anchor', 'end').attr('fill', 'var(--color-fg)').style('font-size', 'var(--cds-font-size-caption)').style('font-weight', v === 'Proposed (full)' ? 'var(--cds-font-weight-medium)' : null).text(v);
+      if (a && b) svg.append('line').attr('x1', x(a.event_f1)).attr('x2', x(b.event_f1)).attr('y1', cy).attr('y2', cy).attr('stroke', 'var(--cds-chart-grid)').attr('stroke-width', 3).attr('stroke-linecap', 'round');
+      [[a, 'var(--cds-chart-muted)', 'Steady traffic'], [b, dash.colors[0], 'Strong drift']].forEach(([r, c, name]) => {
+        if (!r) return;
+        svg.append('circle').attr('cx', x(r.event_f1)).attr('cy', cy).attr('r', 5.5).attr('fill', c).attr('stroke', 'var(--color-panel)').attr('stroke-width', 1.5)
+          .on('mousemove', (ev) => {
+            tipTitle(t, v + ' · ' + name);
+            tipRow(t, null, 'Event F1', f3(r.event_f1)); tipRow(t, null, 'False alarms / 1k', f3(r.fa_per_1k)); tipRow(t, null, 'Traces', String(r.n));
+            const [mx, my] = d3.pointer(ev, el); placeTip(t, el, mx, my);
+          }).on('mouseleave', () => { t.hidden = true; });
+      });
+    });
+  }
+
+  // ---- table: cost ----
+  function drawCost() {
+    const tb = document.querySelector('#table-cost tbody');
+    tb.innerHTML = '';
+    if (status(['overhead']) !== 'ok') return;
+    const rows = [...dash.data('overhead').data].sort((a, b) => ORDER.indexOf(a.detector) - ORDER.indexOf(b.detector));
+    const maxUs = d3.max(rows, (r) => num(r.us_per_window));
+    rows.forEach((r) => {
+      const tr = document.createElement('tr'); if (r.detector === ME) tr.className = 'me';
+      const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+      td(r.detector);
+      const us = td('', 'n');
+      const bar = document.createElement('span'); bar.className = 'ad-bar'; bar.style.width = (num(r.us_per_window) / maxUs * 4) + 'rem'; bar.style.background = colorOf(r.detector);
+      us.append(bar, document.createTextNode(d3.format('.1f')(num(r.us_per_window))));
+      td(d3.format(',')(num(r.state_floats)), 'n');
+      td(String(r.multivariate) === 'True' ? 'Yes' : 'No');
+      tb.appendChild(tr);
+    });
+  }
+
+  // ---- table: stats ----
+  const sel = document.getElementById('stats-setting');
+  let selVal = 'all';
+  sel.addEventListener('change', () => { selVal = sel.value; drawStats(); });
+  function drawStats() {
+    const tb = document.querySelector('#table-stats tbody');
+    tb.innerHTML = '';
+    if (status(['stats']) !== 'ok') return;
+    const rows = dash.data('stats').data;
+    const settings = [...new Set(rows.map((r) => r.setting))];
+    if (sel.options.length !== settings.length + 1) {
+      sel.innerHTML = '';
+      const o = document.createElement('option'); o.value = 'all'; o.textContent = 'All settings'; sel.appendChild(o);
+      settings.forEach((s) => { const op = document.createElement('option'); op.value = s; op.textContent = SETTING[s] || s; sel.appendChild(op); });
+      sel.value = selVal;
+    }
+    rows.filter((r) => selVal === 'all' || r.setting === selVal).forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.dataset.key = encodeURIComponent(r.setting) + ',' + encodeURIComponent(r.versus);
+      const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+      const md = num(r.mean_diff), p = num(r.p_holm);
+      td(SETTING[r.setting] || r.setting); td(r.versus);
+      const sig = p < 0.05;
+      td((md >= 0 ? '+' : '−') + f3(Math.abs(md)), 'n ' + (sig ? (md > 0 ? 'ad-good' : 'ad-bad') : 'ad-tie'));
+      td(String(r.wins), 'n'); td(String(r.losses), 'n');
+      td(p < 0.001 ? p.toExponential(1) : d3.format('.3f')(p), 'n');
+      tb.appendChild(tr);
+    });
+  }
+
+  dash.onData(() => {
+    fillMarks();
+    drawF1(); drawDrift(); drawTypes(); drawCic(); drawPortscan(); drawAblation(); drawCost(); drawStats();
+  });
+})();
+</script>
